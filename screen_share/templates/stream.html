@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Sharing</title>
+</head>
+<body>
+    <h1>Screen Sharing</h1>
+    <div>
+        <button id="start-sharing">Start Screen Sharing</button>
+        <video id="shared-screen" autoplay playsinline></video>
+    </div>
+    
+    <script>
+        const startButton = document.getElementById('start-sharing');
+        const videoElement = document.getElementById('shared-screen');
+
+        // Function to start screen sharing
+        startButton.addEventListener('click', async () => {
+            try {
+                // Use MediaDevices to capture screen
+                const screenStream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true
+                });
+
+                // Display the shared screen in the video element
+                videoElement.srcObject = screenStream;
+
+                // Send the stream to the server (for multi-user, you would use WebRTC signaling)
+                console.log("Screen sharing started.");
+            } catch (error) {
+                console.error("Error sharing screen:", error);
+            }
+        });
+    </script>
+</body>
+</html>
