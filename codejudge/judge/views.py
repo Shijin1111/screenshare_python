@@ -47,7 +47,7 @@ def execute_code(request):
                 code_file.write(code)
 
             # Run the code inside Docker (isolated environment)
-            docker_cmd = f"docker exec code-executor bash -c 'echo \"{code}\" > {file_path} && {cmd}'"
+            docker_cmd = f"docker exec new-code-executor bash -c 'echo \"{code}\" > {file_path} && {cmd}'"
             result = subprocess.run(docker_cmd, shell=True, text=True, capture_output=True, timeout=5)
 
             return JsonResponse({"output": result.stdout, "error": result.stderr, "status": "Success"})
