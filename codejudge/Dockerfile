@@ -10,9 +10,6 @@ RUN apt-get update && \
     python3 python3-pip gcc g++ openjdk-17-jdk tzdata && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Create a directory inside the container to store code files
-RUN mkdir -p /code
-
 # Set working directory inside the container
 WORKDIR /code
 
