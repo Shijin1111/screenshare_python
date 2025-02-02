@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ question.title }}</title>
+</head>
+<body>
+    <h2>{{ question.title }}</h2>
+    <p>{{ question.description }}</p>
+    <h4>Sample Input</h4>
+    <pre>{{ question.sample_input }}</pre>
+    <h4>Sample Output</h4>
+    <pre>{{ question.sample_output }}</pre>
+
+    <label for="language">Choose Language:</label>
+    <select id="language">
+        <option value="34">Python 3</option>
+        <option value="71">JS</option>
+        <option value="62">Java</option>
+    </select>
+
+    <textarea id="code" rows="10" cols="50"></textarea>
+    <button onclick="runCode()">Run Code</button>
+    <button onclick="submitCode()">Submit Code</button>
+
+    <h3>Output:</h3>
+    <pre id="output"></pre>
+
+    <script>
+        function getCSRFToken() {
+            let csrfToken = null;
+            const cookies = document.cookie.split("; ");
+            cookies.forEach(cookie => {
+                const [name, value] = cookie.split("=");
+                if (name === "csrftoken") {
+                    csrfToken = value;
+                }
+            });
+            return csrfToken;
+        }
+        
+        function runCode() {
+            const code = document.getElementById("code").value;
+            const languageId = document.getElementById("language").value;
+            const inputData = document.getElementById("input") ? document.getElementById("input").value : "";
+        
+            const csrfToken = getCSRFToken();  // Get the CSRF token
+        
+            fetch("http://127.0.0.1:8000/compiler/run_code/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken  // Add CSRF token to the header
+                },
+                body: JSON.stringify({
+                    code: code,
+                    language_id: languageId,
+                    input_data: inputData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                document.getElementById("output").innerText = data.output || "Error in execution";
+            })
+            .catch(error => console.error("Error:", error));
+        }
+        
+        function submitCode() {
+            let code = document.getElementById("code").value;
+            let language_id = document.getElementById("language").value;
+            let csrfToken = getCSRFToken();  // Get the CSRF token
+    
+            fetch(`/testsystem/submit/${question.id}/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "X-CSRFToken": csrfToken  // Add CSRF token to the header
+                },
+                body: `code=${encodeURIComponent(code)}&language_id=${language_id}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultText = "";
+                data.results.forEach((test, index) => {
+                    resultText += `Test Case ${index + 1}: ${test.passed ? "✅ Passed" : "❌ Failed"}\n`;
+                    resultText += `Expected Output: ${test.expected_output}\n`;
+                    resultText += `Actual Output: ${test.actual_output}\n\n`;
+                });
+                document.getElementById("output").textContent = resultText;
+            });
+        }
+    </script>
+    
+</body>
+</html>
