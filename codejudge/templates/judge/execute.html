@@ -6,46 +6,39 @@
     <title>Code Judge</title>
 </head>
 <body>
-    <h2>Run Code</h2>
-    <label for="language">Select Language:</label>
+    <h1>Online Code Judge</h1>
+
+    <label>Select Language:</label>
     <select id="language">
         <option value="python">Python</option>
-        <!-- Add more languages here if needed -->
+        <option value="c">C</option>
+        <option value="cpp">C++</option>
+        <option value="java">Java</option>
     </select>
-    
-    <br><br>
-    
-    <label for="code">Enter Code:</label>
-    <textarea id="code" rows="5" cols="50"></textarea>
-    
-    <br><br>
-    
-    <label for="input_data">Input Data (Optional):</label>
-    <textarea id="input_data" rows="3" cols="50"></textarea>
 
     <br><br>
-    
-    <button onclick="executeCode()">Run</button>
-    
-    <h3>Output:</h3>
+
+    <label>Enter Code:</label><br>
+    <textarea id="code" rows="8" cols="50"></textarea><br>
+
+    <label>Enter Input Data:</label><br>
+    <textarea id="input_data" rows="3" cols="50"></textarea><br>
+
+    <button onclick="executeCode()">Run Code</button>
+
+    <h2>Output:</h2>
     <pre id="output"></pre>
 
     <script>
         function executeCode() {
             const language = document.getElementById("language").value;
             const code = document.getElementById("code").value;
-            const inputData = document.getElementById("input_data").value;
+            const input_data = document.getElementById("input_data").value;
 
-            fetch("http://127.0.0.1:8000/execute/", {
+            fetch("/execute/", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    language: language,
-                    code: code,
-                    input_data: inputData
-                })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ language: language, code: code, input_data: input_data })
             })
             .then(response => response.json())
             .then(data => {
