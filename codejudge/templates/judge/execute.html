@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Judge</title>
+</head>
+<body>
+    <h2>Run Code</h2>
+    <label for="language">Select Language:</label>
+    <select id="language">
+        <option value="python">Python</option>
+        <!-- Add more languages here if needed -->
+    </select>
+    
+    <br><br>
+    
+    <label for="code">Enter Code:</label>
+    <textarea id="code" rows="5" cols="50"></textarea>
+    
+    <br><br>
+    
+    <label for="input_data">Input Data (Optional):</label>
+    <textarea id="input_data" rows="3" cols="50"></textarea>
+
+    <br><br>
+    
+    <button onclick="executeCode()">Run</button>
+    
+    <h3>Output:</h3>
+    <pre id="output"></pre>
+
+    <script>
+        function executeCode() {
+            const language = document.getElementById("language").value;
+            const code = document.getElementById("code").value;
+            const inputData = document.getElementById("input_data").value;
+
+            fetch("http://127.0.0.1:8000/execute/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    language: language,
+                    code: code,
+                    input_data: inputData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("output").innerText = data.output || data.error;
+            })
+            .catch(error => {
+                document.getElementById("output").innerText = "Error: " + error;
+            });
+        }
+    </script>
+</body>
+</html>
