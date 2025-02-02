@@ -25,24 +25,19 @@ def execute_code(request):
 
             if language == "python":
                 file_path = f"{temp_dir}/script.py"
-                cmd = ["python3", file_path]
+                cmd = f"python3 /code/script.py"
 
             elif language == "c":
                 file_path = f"{temp_dir}/program.c"
-                executable = f"{temp_dir}/program.out"
-                cmd = ["gcc", file_path, "-o", executable]
-                run_cmd = [executable]
+                cmd = f"gcc /code/program.c -o /code/program.out && /code/program.out"
 
             elif language == "cpp":
                 file_path = f"{temp_dir}/program.cpp"
-                executable = f"{temp_dir}/program.out"
-                cmd = ["g++", file_path, "-o", executable]
-                run_cmd = [executable]
+                cmd = f"g++ /code/program.cpp -o /code/program.out && /code/program.out"
 
             elif language == "java":
                 file_path = f"{temp_dir}/Main.java"
-                cmd = ["javac", file_path]
-                run_cmd = ["java", "-cp", temp_dir, "Main"]
+                cmd = f"javac /code/Main.java && java -cp /code Main"
 
             else:
                 return JsonResponse({"error": "Unsupported language"}, status=400)
@@ -51,15 +46,9 @@ def execute_code(request):
             with open(file_path, "w") as code_file:
                 code_file.write(code)
 
-            if language in ["python"]:
-                result = subprocess.run(cmd, input=input_data, text=True, capture_output=True, timeout=5)
-            else:
-                compile_result = subprocess.run(cmd, capture_output=True, text=True)
-
-                if compile_result.returncode != 0:
-                    return JsonResponse({"error": compile_result.stderr}, status=400)
-
-                result = subprocess.run(run_cmd, input=input_data, text=True, capture_output=True, timeout=5)
+            # Run the code inside Docker (isolated environment)
+            docker_cmd = f"docker exec code-executor bash -c 'echo \"{code}\" > {file_path} && {cmd}'"
+            result = subprocess.run(docker_cmd, shell=True, text=True, capture_output=True, timeout=5)
 
             return JsonResponse({"output": result.stdout, "error": result.stderr, "status": "Success"})
 
