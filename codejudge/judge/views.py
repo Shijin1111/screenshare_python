@@ -66,7 +66,7 @@ def execute_code(request):
 
             # Run the code inside Docker
             container_name = "new-code-executor"  # Replace this with the actual container name
-            docker_cmd = f"docker run --rm -v C:/Users/shiji/Desktop/cnew/screenshare/codejudge/temp_code:/code {container_name} bash -c \"{cmd}\""
+            docker_cmd = f"echo '{input_data}' | docker run --rm -v C:/Users/shiji/Desktop/cnew/screenshare/codejudge/temp_code:/code {container_name} bash -c \"python3 /code/script.py\""
 
             print(f"Running command: {docker_cmd}")  # Debug the Docker command
             result = subprocess.run(docker_cmd, shell=True, text=True, capture_output=True, timeout=15)

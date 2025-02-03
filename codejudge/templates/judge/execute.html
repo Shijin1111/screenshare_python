@@ -4,30 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Judge</title>
+    <style>
+        .container {
+            display: flex;
+            width: 100%;
+        }
+        
+        .left {
+            width: 30%;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid black;
+            background-color: #f8f9fa;
+            margin-right:10px;
+            border-radius:10px;
+        }
+
+        .right {
+            width: 65%;
+            padding: 20px;
+            text-align: left;
+            border: 2px solid black;
+            border-radius:10px;
+        }
+        h1 {
+            margin: 0;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Online Code Judge</h1>
+    <h1>CODE JUDGE</h1>
 
-    <label>Select Language:</label>
-    <select id="language">
-        <option value="python">Python</option>
-        <option value="c">C</option>
-        <option value="cpp">C++</option>
-        <option value="java">Java</option>
-    </select>
+    <div class="container">
+        <div class="left">
+            <h2>Instructions</h2>
+            <p>Enter your code in the right panel, select a language, provide input if needed, and click "Run Code" to execute.</p>
+        </div>
+        <div class="right">
+            <label>Select Language:</label>
+            <select id="language">
+                <option value="python">Python</option>
+                <option value="c">C</option>
+                <option value="cpp">C++</option>
+                <option value="java">Java</option>
+            </select>
 
-    <br><br>
+            <br><br>
 
-    <label>Enter Code:</label><br>
-    <textarea id="code" rows="8" cols="50"></textarea><br>
+            <label>Enter Code:</label><br>
+            <textarea id="code" rows="8" cols="50"></textarea><br>
 
-    <label>Enter Input Data:</label><br>
-    <textarea id="input_data" rows="3" cols="50"></textarea><br>
+            <label>Enter Input Data:</label><br>
+            <textarea id="input_data" rows="3" cols="50"></textarea><br>
 
-    <button onclick="executeCode()">Run Code</button>
+            <button onclick="executeCode()">Run Code</button>
 
-    <h2>Output:</h2>
-    <pre id="output"></pre>
+            <h2>Output:</h2>
+            <pre id="output"></pre>
+        </div>
+    </div>
 
     <script>
         function executeCode() {
