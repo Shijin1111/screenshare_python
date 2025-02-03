@@ -85,33 +85,58 @@
 #     return JsonResponse({"error": "Only POST requests are allowed"}, status=400)
 
 
-
 from django.shortcuts import render, get_object_or_404
 from .models import Question, Submission, TestCase
 from .utils import execute_code
 
 def submit_code(request, question_id):
     question = get_object_or_404(Question, id=question_id)
-    status = None  # Initialize status message
+    status = None
+    selected_language = "python"  # Default language
+    error_details = None  # To store error messages
+    test_case_results = []
 
     if request.method == "POST":
         code = request.POST.get("code")
-        language = request.POST.get("language")
+        selected_language = request.POST.get("language")  # Store selected language
 
         test_cases = TestCase.objects.filter(question=question)
         all_passed = True
 
         for test in test_cases:
-            result = execute_code(code, language, test.input_data)
+            result = execute_code(code, selected_language, test.input_data)
 
+            # Check if the result matches the expected output
             if result.strip() != test.expected_output.strip():
                 all_passed = False
-                break
+                test_case_results.append({
+                    "input": test.input_data,
+                    "expected": test.expected_output,
+                    "result": result,
+                    "status": "Failed"
+                })
+            else:
+                test_case_results.append({
+                    "input": test.input_data,
+                    "expected": test.expected_output,
+                    "result": result,
+                    "status": "Passed"
+                })
 
         status = "Accepted" if all_passed else "Wrong Answer"
-        Submission.objects.create(user="TestUser", question=question, code=code, language=language, status=status)
+        Submission.objects.create(user="TestUser", question=question, code=code, language=selected_language, status=status)
 
-    return render(request, "judge/submit.html", {"question": question, "status": status})
+        # If any error occurs during code execution, store that as well
+        error_details = "Check the output below for errors" if not all_passed else None
+
+    return render(request, "judge/submit.html", {
+        "question": question,
+        "status": status,
+        "language": selected_language,
+        "code": code,
+        "test_case_results": test_case_results,
+        "error_details": error_details
+    })
 
 
 

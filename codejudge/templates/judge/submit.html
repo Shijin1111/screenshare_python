@@ -92,16 +92,16 @@
                 {% csrf_token %}
                 <label>Select Language:</label>
                 <select name="language">
-                    <option value="python">Python</option>
-                    <option value="c">C</option>
-                    <option value="cpp">C++</option>
-                    <option value="java">Java</option>
+                    <option value="python" {% if language == 'python' %}selected{% endif %}>Python</option>
+                    <option value="c" {% if language == 'c' %}selected{% endif %}>C</option>
+                    <option value="cpp" {% if language == 'cpp' %}selected{% endif %}>C++</option>
+                    <option value="java" {% if language == 'java' %}selected{% endif %}>Java</option>
                 </select>
 
                 <br><br>
 
                 <label>Enter Code:</label><br>
-                <textarea name="code" rows="8" cols="50"></textarea><br>
+                <textarea name="code" rows="8" cols="50">{{ code }}</textarea><br>
 
                 <button type="submit">Run Code</button>
             </form>
@@ -109,6 +109,24 @@
             {% if status %}
                 <h2>Result:</h2>
                 <p class="status">{{ status }}</p>
+            {% endif %}
+
+            {% if test_case_results %}
+                <h3>Test Case Results:</h3>
+                <ul>
+                    {% for result in test_case_results %}
+                        <li>
+                            <strong>Input:</strong> <pre>{{ result.input }}</pre>
+                            <strong>Expected Output:</strong> <pre>{{ result.expected }}</pre>
+                            <strong>Your Output:</strong> <pre>{{ result.result }}</pre>
+                            <p>Status: <span class="{{ result.status|lower }}">{{ result.status }}</span></p>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            {% if error_details %}
+                <h3>{{ error_details }}</h3>
             {% endif %}
         </div>
     </div>
