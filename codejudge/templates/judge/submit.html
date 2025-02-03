@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Judge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            width: 100vw;
+            height: 90vh; /* Adjust height to fit screen */
+            padding: 20px;
+        }
+
+        .left {
+            width: 30%;
+            padding: 20px;
+            text-align: left;
+            border: 2px solid black;
+            background-color: #f8f9fa;
+            margin-right: 10px;
+            border-radius: 10px;
+            overflow-y: auto;
+        }
+
+        .right {
+            flex-grow: 1; /* Adjust width dynamically */
+            padding: 20px;
+            text-align: left;
+            border: 2px solid black;
+            border-radius: 10px;
+            overflow-y: auto;
+        }
+
+        h1 {
+            margin: 0;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .status {
+            font-size: 20px;
+            font-weight: bold;
+            color: {% if status == "Accepted" %}green{% else %}red{% endif %};
+        }
+
+        pre {
+            background-color: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Online Code Judge</h1>
+
+    <div class="container">
+        <!-- Left Side: Question Details -->
+        <div class="left">
+            <h2>{{ question.title }}</h2>
+            <p><strong>Description:</strong> {{ question.description }}</p>
+
+            <h3>Sample Input</h3>
+            <pre>{{ question.sample_input }}</pre>
+
+            <h3>Sample Output</h3>
+            <pre>{{ question.sample_output }}</pre>
+
+            <h3>Test Cases</h3>
+            <ul>
+                {% for test in question.testcase_set.all %}
+                    <li><strong>Input:</strong> <pre>{{ test.input_data }}</pre> <strong>Expected Output:</strong> <pre>{{ test.expected_output }}</pre></li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Right Side: Code Submission Form -->
+        <div class="right">
+            <form method="POST">
+                {% csrf_token %}
+                <label>Select Language:</label>
+                <select name="language">
+                    <option value="python">Python</option>
+                    <option value="c">C</option>
+                    <option value="cpp">C++</option>
+                    <option value="java">Java</option>
+                </select>
+
+                <br><br>
+
+                <label>Enter Code:</label><br>
+                <textarea name="code" rows="8" cols="50"></textarea><br>
+
+                <button type="submit">Run Code</button>
+            </form>
+
+            {% if status %}
+                <h2>Result:</h2>
+                <p class="status">{{ status }}</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

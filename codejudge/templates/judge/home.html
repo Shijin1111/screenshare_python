@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Code Judge</title>
+</head>
+<body>
+    <h1>Welcome to Code Judge</h1>
+    <h2>Available Questions</h2>
+    <ul>
+        {% for question in questions %}
+            <li>
+                <a href="{% url 'submit_code' question.id %}">{{ question.title }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

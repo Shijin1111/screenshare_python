@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import Submission,TestCase,Question
+
+admin.site.register(Submission)
+admin.site.register(TestCase)
+admin.site.register(Question)
