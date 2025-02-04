@@ -10,10 +10,12 @@ class Question(models.Model):
     def __str__(self):
         return self.title
 
+from django.contrib.postgres.fields import ArrayField  
 class TestCase(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="test_cases")
-    input_data = models.TextField()
-    expected_output = models.TextField()
+    input_data = models.JSONField()  # This will store dynamic input data (list, dict, etc.)
+    expected_output = models.JSONField()  # Store the expected output as a string
+
 
 class Submission(models.Model):
     user = models.CharField(max_length=100)  # Can be linked to auth user

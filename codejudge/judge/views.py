@@ -95,6 +95,7 @@ def submit_code(request, question_id):
     selected_language = "python"  # Default language
     error_details = None  # To store error messages
     test_case_results = []
+    code = ""
 
     if request.method == "POST":
         code = request.POST.get("code")
