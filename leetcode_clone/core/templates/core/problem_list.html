@@ -1,0 +1,15 @@
+<!-- core/templates/core/problem_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LeetCode Clone - Problems</title>
+</head>
+<body>
+    <h1>LeetCode Clone Problems</h1>
+    <ul>
+        {% for problem in problems %}
+            <li><a href="{% url 'core:problem_detail' problem.id %}">{{ problem.title }}</a></li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

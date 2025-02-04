@@ -1,0 +1,16 @@
+<!-- core/templates/core/problem_detail.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ problem.title }} - Problem</title>
+</head>
+<body>
+    <h1>{{ problem.title }}</h1>
+    <p><strong>Description:</strong> {{ problem.description }}</p>
+    <p><strong>Input Example:</strong> {{ problem.input_example }}</p>
+    <p><strong>Output Example:</strong> {{ problem.output_example }}</p>
+    <p><strong>Constraints:</strong> {{ problem.constraints }}</p>
+    
+    <a href="{% url 'core:submit_solution' problem.id %}">Submit a solution</a>
+</body>
+</html>

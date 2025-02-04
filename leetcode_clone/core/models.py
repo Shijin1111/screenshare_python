@@ -1,18 +1,24 @@
 # core/models.py
 from django.db import models
 from django.contrib.auth.models import User
+# core/models.py
 
 class Problem(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
-    difficulty = models.CharField(choices=[('easy', 'Easy'), ('medium', 'Medium'), ('hard', 'Hard')], max_length=6)
     input_example = models.TextField()
     output_example = models.TextField()
-    constraints = models.TextField()
+    constraints = models.TextField(null=True)
+
+    # Function signatures for each language (Python, C++, Java)
+    expected_python_signature = models.TextField()
+    expected_cpp_signature = models.TextField()
+    expected_java_signature = models.TextField()
 
     def __str__(self):
         return self.title
 
+# core/models.py
 class Submission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     problem = models.ForeignKey(Problem, related_name='submissions', on_delete=models.CASCADE)
@@ -22,7 +28,8 @@ class Submission(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Submission by {self.user.username} for {self.problem.title}"
+        return f"{self.user.username}'s submission for {self.problem.title}"
+
 
 class Leaderboard(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
