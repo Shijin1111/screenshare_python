@@ -1,24 +1,28 @@
-# core/models.py
 from django.db import models
 from django.contrib.auth.models import User
-# core/models.py
 
 class Problem(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     input_example = models.TextField()
     output_example = models.TextField()
-    constraints = models.TextField(null=True)
+    constraints = models.TextField(null=True, blank=True)
+    
+    python_signature = models.TextField(null=True,blank=True)
+    cpp_signature = models.TextField(null=True,blank=True)
+    java_signature = models.TextField(null=True,blank=True)
 
-    # Function signatures for each language (Python, C++, Java)
-    expected_python_signature = models.TextField()
-    expected_cpp_signature = models.TextField()
-    expected_java_signature = models.TextField()
+    prefix_python = models.TextField(default='', null=True,blank=True)
+    prefix_cpp = models.TextField(default='',null=True, blank=True)
+    prefix_java = models.TextField(default='',null=True, blank=True)
+
+    main_python = models.TextField(default='',null=True, blank=True)
+    main_cpp = models.TextField(default='',null=True, blank=True)
+    main_java = models.TextField(default='',null=True, blank=True)
 
     def __str__(self):
         return self.title
 
-# core/models.py
 class Submission(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     problem = models.ForeignKey(Problem, related_name='submissions', on_delete=models.CASCADE)

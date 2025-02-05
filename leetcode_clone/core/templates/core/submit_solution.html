@@ -76,7 +76,7 @@
 
         <!-- Right Side: Code Submission Form -->
         <div class="right">
-            <form method="POST">
+            <form method="POST" action="{% url 'core:run_code' problem.id %}" id="code-form">
                 {% csrf_token %}
                 
                 <label for="language">Select Language:</label>
@@ -90,15 +90,17 @@
                 <label for="code">Code:</label><br>
                 <textarea name="code" id="code" rows="10" cols="50"></textarea><br><br>
                 
-                <input type="submit" value="Submit Solution">
+                <input type="submit" value="Run Code">
             </form>
+            <div id="output"></div>
+            
         </div>
     </div>
 
     <script>
         const languageSelect = document.getElementById('language');
         const codeTextarea = document.getElementById('code');
-        
+
         // Function signatures passed from Django template
         const pythonSignature = `{{ python_signature | safe }}`;
         const cppSignature = `{{ cpp_signature | safe }}`;
@@ -125,6 +127,36 @@
 
         // Update signature when the language is changed
         languageSelect.addEventListener('change', setSignature);
+
+        document.getElementById('code-form').addEventListener('submit', function(event) {
+            event.preventDefault();  // Prevent the default form submission
+        
+            const formData = new FormData();
+            formData.append("language", languageSelect.value);
+            formData.append("code", codeTextarea.value);
+        
+            fetch("{% url 'core:run_code' problem.id %}", {
+                method: "POST",
+                body: formData,
+                headers: { "X-CSRFToken": "{{ csrf_token }}" }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    // If response isn't ok, throw an error
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                return response.json();  // Parse JSON response
+            })
+            .then(data => {
+                document.getElementById("output").innerText = data.output || data.error;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById("output").innerText = `Error: ${error.message}`;
+            });
+        });
+        
+
     </script>
 </body>
 </html>
