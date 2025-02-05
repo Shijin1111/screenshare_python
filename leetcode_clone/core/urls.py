@@ -7,6 +7,4 @@ app_name = 'core'
 urlpatterns = [
     path('', views.problem_list, name='problem_list'),
     path('problems/<int:problem_id>/', views.problem_detail, name='problem_detail'),
-    path('problems/<int:problem_id>/submit/', views.submit_solution, name='submit_solution'),
-    path("problems/<int:problem_id>/run/", views.run_code, name="run_code"),
 ]

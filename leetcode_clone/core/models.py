@@ -42,3 +42,9 @@ class Leaderboard(models.Model):
 
     def __str__(self):
         return f"Leaderboard entry for {self.user.username}"
+
+from django.contrib.postgres.fields import ArrayField  
+class TestCase(models.Model):
+    problem = models.ForeignKey(Problem, on_delete=models.CASCADE, related_name="test_cases")
+    input_data = models.JSONField()  
+    expected_output = models.JSONField()  
