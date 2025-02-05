@@ -78,12 +78,12 @@
             <h3>Sample Output</h3>
             <pre>{{ question.sample_output }}</pre>
 
-            <h3>Test Cases</h3>
+            {% comment %} <h3>Test Cases</h3>
             <ul>
                 {% for test in question.testcase_set.all %}
                     <li><strong>Input:</strong> <pre>{{ test.input_data }}</pre> <strong>Expected Output:</strong> <pre>{{ test.expected_output }}</pre></li>
                 {% endfor %}
-            </ul>
+            </ul> {% endcomment %}
         </div>
 
         <!-- Right Side: Code Submission Form -->
@@ -119,7 +119,7 @@
                             <strong>Input:</strong> <pre>{{ result.input }}</pre>
                             <strong>Expected Output:</strong> <pre>{{ result.expected }}</pre>
                             <strong>Your Output:</strong> <pre>{{ result.result }}</pre>
-                            <p>Status: <span class="{{ result.status|lower }}">{{ result.status }}</span></p>
+                            {% comment %} <p>Status: <span class="{{ result.status|lower }}">{{ result.status }}</span></p> {% endcomment %}
                         </li>
                     {% endfor %}
                 </ul>

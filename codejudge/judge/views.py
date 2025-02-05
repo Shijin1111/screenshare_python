@@ -88,7 +88,8 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Question, Submission, TestCase
 from .utils import execute_code
-
+from django.shortcuts import render, get_object_or_404
+from .models import Question, TestCase, Submission
 def submit_code(request, question_id):
     question = get_object_or_404(Question, id=question_id)
     status = None
@@ -107,8 +108,12 @@ def submit_code(request, question_id):
         for test in test_cases:
             result = execute_code(code, selected_language, test.input_data)
 
+            # Check if the result is a list (for Two Sum case, for example)
+            if isinstance(result, list):
+                result = str(result)  # Convert list to string for comparison
+
             # Check if the result matches the expected output
-            if result.strip() != test.expected_output.strip():
+            if result.strip() != str(test.expected_output).strip():
                 all_passed = False
                 test_case_results.append({
                     "input": test.input_data,
@@ -138,7 +143,6 @@ def submit_code(request, question_id):
         "test_case_results": test_case_results,
         "error_details": error_details
     })
-
 
 
 

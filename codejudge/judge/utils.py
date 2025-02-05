@@ -1,9 +1,12 @@
 import subprocess
 import re
+import json
 
 def execute_code(code, language, input_data):
+    input_str = json.dumps(input_data)  
+
     if language == "python":
-        command = ["python3", "-c", code]
+        command = ["python3", "-c", f"{code}\ninput_data = {input_str}\n{code}"]
     elif language == "cpp":
         with open("temp.cpp", "w") as file:
             file.write(code)
@@ -15,7 +18,6 @@ def execute_code(code, language, input_data):
             return f"Compilation Error: {e.stderr.decode()}"
 
     elif language == "java":
-        # Extract the class name using regex
         match = re.search(r'public\s+class\s+(\w+)', code)
         
         if not match:
@@ -36,7 +38,7 @@ def execute_code(code, language, input_data):
             # Run the Java program using the Java runtime
             # Pass the dynamic input_data to the Java program
             run_command = ["java", class_name]
-            result = subprocess.run(run_command, input=input_data + "\n", capture_output=True, text=True)
+            result = subprocess.run(run_command, input=input_str + "\n", capture_output=True, text=True)
 
             return result.stdout.strip() if result.stdout else "Execution Error"
         except subprocess.CalledProcessError as e:
@@ -45,7 +47,7 @@ def execute_code(code, language, input_data):
         return "Error: Unsupported language"
 
     try:
-        process = subprocess.run(command, input=input_data, text=True, capture_output=True, timeout=5)
+        process = subprocess.run(command, input=input_str, text=True, capture_output=True, timeout=5)
         if process.returncode != 0:
             return f"Runtime Error: {process.stderr.strip()}"
         return process.stdout.strip()  # Return the output of execution
