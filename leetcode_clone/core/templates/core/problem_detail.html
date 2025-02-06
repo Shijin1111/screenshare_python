@@ -66,12 +66,12 @@
             <h3>Sample Output</h3>
             <pre>{{ problem.output_example }}</pre>
 
-            <h3>Test Cases</h3>
+            {% comment %} <h3>Test Cases</h3>
             <ul>
                 {% for test in problem.testcase_set.all %}
                     <li><strong>Input:</strong> <pre>{{ test.input_data }}</pre> <strong>Expected Output:</strong> <pre>{{ test.expected_output }}</pre></li>
                 {% endfor %}
-            </ul>
+            </ul> {% endcomment %}
         </div>
 
         <!-- Right Side: Code Submission Form -->
