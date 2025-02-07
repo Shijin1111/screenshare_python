@@ -138,7 +138,45 @@
             
         });
         
-
+        document.getElementById('code-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+        
+            const formData = new FormData();
+            formData.append("language", document.getElementById('language').value);
+            formData.append("code", document.getElementById('code').value);
+        
+            fetch(window.location.href, {  
+                method: "POST",
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Response Data:", data); // Debugging Output
+                let outputDiv = document.getElementById('output');
+                outputDiv.innerHTML = "<h3>Results:</h3>";
+        
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(test => {
+                        outputDiv.innerHTML += `<p><strong>Input:</strong> ${test.input}<br>
+                                                 <strong>Expected:</strong> ${test.expected}<br>
+                                                 <strong>Actual:</strong> ${test.actual}<br>
+                                                 <strong>Status:</strong> ${test.status}</p><hr>`;
+                    });
+                } else {
+                    outputDiv.innerHTML += "<p>No results received. Check the server logs.</p>";
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                document.getElementById('output').innerHTML = `<p>Error: ${error.message}</p>`;
+            });
+        });
+        
     </script>
 </body>
 </html>
