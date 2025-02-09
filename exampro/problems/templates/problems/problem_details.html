@@ -49,7 +49,6 @@
         <div class="right">
             <form method="POST">
                 {% csrf_token %}
-
                 <label for="language">Select Language:</label>
                 <select name="language" id="language">
                     <option value="python" {% if language == "python" %}selected{% endif %}>Python</option>
@@ -60,31 +59,36 @@
                 <label for="code">Enter Your Code:</label>
                 <textarea name="code" id="code">{{ code }}</textarea>
 
-                {% comment %} <label for="user_input">Enter User Input (if required):</label>
-                <textarea name="user_input" id="user_input">{{ user_input }}</textarea> {% endcomment %}
-
                 <button type="submit">Run Code</button>
             </form>
 
-            {% if test_case %}
-                <h3>Test Case Input:</h3>
-                <pre>{{ test_case.input_data }}</pre>
+            {% if results %}
+                <h3>Test Case Results:</h3>
+                <ul>
+                    {% for result in results %}
+                        <li>
+                            <strong>Test Case Input:</strong>
+                            <pre>{{ result.test_case.input_data }}</pre>
+                            
+                            <strong>Expected Output:</strong>
+                            <pre>{{ result.expected_output }}</pre>
 
-                {% if output %}
-                    <h3>Program Output:</h3>
-                    <div class="output">{{ output }}</div>
+                            <strong>Program Output:</strong>
+                            <div class="output">{{ result.output }}</div>
 
-                    {% if success %}
-                        <p style="color: green; font-weight: bold;">Success: Output matches expected result!</p>
-                    {% else %}
-                        <p style="color: red; font-weight: bold;">Failure: Output did not match expected result.</p>
-                        <h4>Expected Output:</h4>
-                        <div class="output">{{ test_case.expected_output }}</div>
-                    {% endif %}
-                {% endif %}
+                            {% if result.success %}
+                                <p style="color: green; font-weight: bold;">Success!</p>
+                            {% else %}
+                                <p style="color: red; font-weight: bold;">Failure!</p>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+
             {% endif %}
-
         </div>
     </div>
+
+
 </body>
 </html>
