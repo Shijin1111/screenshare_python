@@ -1,17 +1,18 @@
-# Read input as a comma-separated list
-height = list(map(int, input().split(',')))
+# Read user input
+input_str = input()
 
-# Two-pointer approach to find max area
-left, right = 0, len(height) - 1
-max_area = 0
+# Split the input by semicolon
+nums_str, target_str = input_str.split(';')
 
-while left < right:
-    width = right - left
-    max_area = max(max_area, min(height[left], height[right]) * width)
-    
-    if height[left] < height[right]:
-        left += 1
-    else:
-        right -= 1
+# Convert nums to list of integers and target to an integer
+nums = list(map(int, nums_str.split(',')))
+target = int(target_str)
 
-print(max_area)
+# Two Sum logic
+num_map = {}
+for i, num in enumerate(nums):
+    complement = target - num
+    if complement in num_map:
+        print([num_map[complement], i])
+        break
+    num_map[num] = i

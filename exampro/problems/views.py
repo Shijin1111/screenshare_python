@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from .models import Problem
+from .models import Problem,TestCase
 import subprocess
 
 def home(request):
@@ -8,53 +8,46 @@ def home(request):
 
 def problem_details(request, problem_id):
     problem = get_object_or_404(Problem, id=problem_id)
-    code = ""
-    language = "python"
-    user_input = ""
-    output = None
+    output = ""
+    success = False
+    test_case = None
 
-    if request.method == "POST":
-        code = request.POST.get("code")
-        language = request.POST.get("language")
-        user_input = request.POST.get("user_input", "")
+    if request.method == 'POST':
+        language = request.POST['language']
+        code = request.POST['code']
+        
+        # Fetch the first test case for demonstration (modify as needed)
+        test_case = problem.test_cases.first()
+        
+        if test_case:
+            user_input = test_case.input_data
+            expected_output = test_case.expected_output
 
-        file_map = {
-            "python": "solution.py",
-            "cpp": "solution.cpp",
-            "java": "Solution.java"
-        }
+            # Prepare execution environment based on language
+            try:
+                if language == 'python':
+                    process = subprocess.run(
+                        ['python3', '-c', code],
+                        input=user_input.encode(),
+                        capture_output=True,
+                        timeout=5
+                    )
+                    output = process.stdout.decode().strip()
+                elif language == 'cpp':
+                    # Similar logic for compiling/running C++ code
+                    output = "C++ execution logic not implemented here."
+                elif language == 'java':
+                    # Similar logic for compiling/running Java code
+                    output = "Java execution logic not implemented here."
+            except subprocess.TimeoutExpired:
+                output = "Execution timed out."
 
-        try:
-            # Write code to file
-            with open(file_map[language], "w") as file:
-                file.write(code)
-
-            # Handle code execution
-            if language == "cpp":
-                compile_process = subprocess.run(["g++", file_map["cpp"], "-o", "solution.out"], capture_output=True, text=True)
-                if compile_process.returncode != 0:
-                    output = compile_process.stderr
-                else:
-                    execution = subprocess.run(["./solution.out"], input=user_input, capture_output=True, text=True)
-                    output = execution.stdout if execution.returncode == 0 else execution.stderr
-            elif language == "java":
-                compile_process = subprocess.run(["javac", file_map["java"]], capture_output=True, text=True)
-                if compile_process.returncode != 0:
-                    output = compile_process.stderr
-                else:
-                    execution = subprocess.run(["java", "Solution"], input=user_input, capture_output=True, text=True)
-                    output = execution.stdout if execution.returncode == 0 else execution.stderr
-            else:  # Python
-                execution = subprocess.run(["python3", file_map["python"]], input=user_input, capture_output=True, text=True)
-                output = execution.stdout if execution.returncode == 0 else execution.stderr
-
-        except Exception as e:
-            output = f"Error: {str(e)}"
+            # Check for success/failure
+            success = (output == expected_output)
 
     return render(request, 'problems/problem_details.html', {
         'problem': problem,
-        'code': code,
-        'language': language,
-        'user_input': user_input,
-        'output': output
+        'output': output,
+        'success': success,
+        'test_case': test_case
     })

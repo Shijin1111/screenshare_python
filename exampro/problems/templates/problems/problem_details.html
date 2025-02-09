@@ -60,16 +60,30 @@
                 <label for="code">Enter Your Code:</label>
                 <textarea name="code" id="code">{{ code }}</textarea>
 
-                <label for="user_input">Enter User Input (if required):</label>
-                <textarea name="user_input" id="user_input">{{ user_input }}</textarea>
+                {% comment %} <label for="user_input">Enter User Input (if required):</label>
+                <textarea name="user_input" id="user_input">{{ user_input }}</textarea> {% endcomment %}
 
                 <button type="submit">Run Code</button>
             </form>
 
-            {% if output %}
-                <h3>Program Output:</h3>
-                <div class="output">{{ output }}</div>
+            {% if test_case %}
+                <h3>Test Case Input:</h3>
+                <pre>{{ test_case.input_data }}</pre>
+
+                {% if output %}
+                    <h3>Program Output:</h3>
+                    <div class="output">{{ output }}</div>
+
+                    {% if success %}
+                        <p style="color: green; font-weight: bold;">Success: Output matches expected result!</p>
+                    {% else %}
+                        <p style="color: red; font-weight: bold;">Failure: Output did not match expected result.</p>
+                        <h4>Expected Output:</h4>
+                        <div class="output">{{ test_case.expected_output }}</div>
+                    {% endif %}
+                {% endif %}
             {% endif %}
+
         </div>
     </div>
 </body>
