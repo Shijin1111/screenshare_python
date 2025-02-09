@@ -10,9 +10,9 @@
         }
         .left {
             width: 40%;
-            border:solid black;
-            border-radius:15px;
-            padding:20px;
+            border: solid black;
+            border-radius: 15px;
+            padding: 20px;
         }
         .right {
             width: 50%;
@@ -20,10 +20,16 @@
         textarea {
             width: 100%;
             height: 200px;
-            border-radius:5px;
+            border-radius: 5px;
         }
         button {
             margin-top: 10px;
+        }
+        .output {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -43,6 +49,7 @@
         <div class="right">
             <form method="POST">
                 {% csrf_token %}
+
                 <label for="language">Select Language:</label>
                 <select name="language" id="language">
                     <option value="python" {% if language == "python" %}selected{% endif %}>Python</option>
@@ -50,14 +57,18 @@
                     <option value="java" {% if language == "java" %}selected{% endif %}>Java</option>
                 </select>
 
-                java code should be in Solution class
+                <label for="code">Enter Your Code:</label>
                 <textarea name="code" id="code">{{ code }}</textarea>
+
+                <label for="user_input">Enter User Input (if required):</label>
+                <textarea name="user_input" id="user_input">{{ user_input }}</textarea>
 
                 <button type="submit">Run Code</button>
             </form>
+
             {% if output %}
                 <h3>Program Output:</h3>
-                <pre>{{ output }}</pre>
+                <div class="output">{{ output }}</div>
             {% endif %}
         </div>
     </div>
