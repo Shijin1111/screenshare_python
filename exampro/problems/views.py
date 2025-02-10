@@ -6,7 +6,24 @@ def home(request):
     problems = Problem.objects.all()
     return render(request, 'problems/home.html', {'problems': problems})
 
+import subprocess
+import os
+from django.shortcuts import render, get_object_or_404
+from .models import Problem, TestCase
 
+import subprocess
+import os
+from django.shortcuts import render, get_object_or_404
+from .models import Problem, TestCase
+
+def get_complete_code(problem, language, user_code):
+    """
+    Concatenate prefix, user code, and main section for execution.
+    """
+    prefix = getattr(problem, f"{language}_code_prefix", "") or ""
+    main_code = getattr(problem, f"{language}_main", "") or ""
+
+    return f"{prefix}\n{user_code}\n{main_code}"
 
 def problem_details(request, problem_id):
     problem = get_object_or_404(Problem, id=problem_id)
@@ -18,8 +35,10 @@ def problem_details(request, problem_id):
         language = request.POST.get('language')
         code = request.POST.get('code')
 
+        # Prepare the final code for execution
+        complete_code = get_complete_code(problem, language, code)
         test_cases = problem.test_cases.all()
-        
+
         for test_case in test_cases:
             user_input = test_case.input_data.strip()
             expected_output = test_case.expected_output.strip()
@@ -29,7 +48,7 @@ def problem_details(request, problem_id):
             try:
                 if language == 'python':
                     process = subprocess.run(
-                        ['python3', '-c', code],
+                        ['python3', '-c', complete_code],
                         input=user_input.encode(),
                         capture_output=True,
                         timeout=5
@@ -38,33 +57,29 @@ def problem_details(request, problem_id):
 
                 elif language == 'cpp':
                     with open('code.cpp', 'w') as f:
-                        f.write(code)
+                        f.write(complete_code)
 
-                    # Compile C++ code
                     compile_process = subprocess.run(['g++', 'code.cpp', '-o', 'code.out'], capture_output=True)
                     if compile_process.returncode != 0:
                         output = compile_process.stderr.decode().strip()
                     else:
-                        # Execute the compiled C++ binary
                         process = subprocess.run(['./code.out'], input=user_input.encode(), capture_output=True, timeout=5)
                         output = process.stdout.decode().strip()
 
                 elif language == 'java':
                     with open('Main.java', 'w') as f:
-                        f.write(code)
+                        f.write(complete_code)
 
-                    # Compile Java code
                     compile_process = subprocess.run(['javac', 'Main.java'], capture_output=True)
                     if compile_process.returncode != 0:
                         output = compile_process.stderr.decode().strip()
                     else:
-                        # Execute the compiled Java class
                         process = subprocess.run(['java', 'Main'], input=user_input.encode(), capture_output=True, timeout=5)
                         output = process.stdout.decode().strip()
 
             except subprocess.TimeoutExpired:
                 output = "Execution timed out."
-
+            
             success = (output == expected_output)
             results.append({
                 'test_case': test_case,
