@@ -1,16 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Problem,TestCase
-import subprocess
+import subprocess,os
 
 def home(request):
     problems = Problem.objects.all()
     return render(request, 'problems/home.html', {'problems': problems})
 
 
-import subprocess
-import os
-from django.shortcuts import render, get_object_or_404
-from .models import Problem, TestCase
 
 def problem_details(request, problem_id):
     problem = get_object_or_404(Problem, id=problem_id)
