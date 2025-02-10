@@ -35,8 +35,8 @@
             border-radius: 5px;
             white-space: pre-wrap;
         }
-        h4{
-            margin-bottom: 0;
+        h3{
+            margin: 0;
         }
         h1{
             text-align: center;
@@ -48,9 +48,9 @@
     <div class="container">
         <div class="left">
             <h3>Description</h3>
-            <p>{{ problem.description }}</p>
+            <p>{{ problem.description|linebreaks }}</p>
 
-            <h4>Sample testcases</h4>
+            <h3>Sample testcases</h3>
             <pre>{{ problem.sample_testcases }}</pre>
 
         </div>
@@ -64,7 +64,6 @@
                     <option value="java" {% if language == "java" %}selected{% endif %}>Java</option>
                 </select>
 
-                
                 <textarea name="code" id="code">{{ code }}</textarea>
 
                 <button type="submit">Run Code</button>
